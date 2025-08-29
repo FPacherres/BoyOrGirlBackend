@@ -101,19 +101,3 @@ app.get('/fecha-objetivo', (req, res) => {
 app.listen(PORT, () => {
   console.log(`Servidor SSE corriendo en http://localhost:${PORT}`);
 });
-
-
-// === AUTO-PING PARA EVITAR SLEEP EN RENDER ===
-if (process.env.RENDER_EXTERNAL_HOSTNAME) {
-  const fetch = (...args) => import('node-fetch').then(({default: fetch}) => fetch(...args));
-  const URL = `https://${process.env.RENDER_EXTERNAL_HOSTNAME}`;
-
-  setInterval(async () => {
-    try {
-      const res = await fetch(URL + '/fecha-objetivo');
-      console.log('Ping exitoso a', URL, 'status:', res.status);
-    } catch (err) {
-      console.error('Error en ping:', err.message);
-    }
-  }, 1000 * 60 * 10); // cada 10 minutos
-}
