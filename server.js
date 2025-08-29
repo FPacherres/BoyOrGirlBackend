@@ -1,7 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 const app = express();
-const PORT = 3000;
+const PORT = process.env.PORT || 3000; // usa el puerto de Render si existe
 
 const dayjs = require('dayjs');
 const utc = require('dayjs/plugin/utc');
@@ -47,7 +47,7 @@ app.get('/eventos', (req, res) => {
 });
 
 
-let resultado = null; // valor que guardaremos (puede ser 'niño' o 'mujer')
+let resultado = null; // valor que guardaremos (puede ser 'niño' o 'niña')
 
 app.post('/registrar-genero', express.json(), (req, res) => {
   const { genero } = req.body;
@@ -101,3 +101,19 @@ app.get('/fecha-objetivo', (req, res) => {
 app.listen(PORT, () => {
   console.log(`Servidor SSE corriendo en http://localhost:${PORT}`);
 });
+
+
+// === AUTO-PING PARA EVITAR SLEEP EN RENDER ===
+if (process.env.RENDER_EXTERNAL_HOSTNAME) {
+  const fetch = (...args) => import('node-fetch').then(({default: fetch}) => fetch(...args));
+  const URL = `https://${process.env.RENDER_EXTERNAL_HOSTNAME}`;
+
+  setInterval(async () => {
+    try {
+      const res = await fetch(URL + '/fecha-objetivo');
+      console.log('Ping exitoso a', URL, 'status:', res.status);
+    } catch (err) {
+      console.error('Error en ping:', err.message);
+    }
+  }, 1000 * 60 * 10); // cada 10 minutos
+}
