@@ -1,7 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 const app = express();
-const PORT = process.env.PORT || 3000; // usa el puerto de Render si existe
+const PORT = process.env.PORT || 8000; // usa el puerto de Render si existe
 
 const dayjs = require('dayjs');
 const utc = require('dayjs/plugin/utc');
